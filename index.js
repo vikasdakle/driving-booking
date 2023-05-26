@@ -17,6 +17,13 @@ app.use(cors({
 app.use("/api/user", require("./routes/userRoutes"))
 app.use("/api/admin", require("./routes/adminRoutes"))
 
+
+
+app.use("*", (req, res) => {
+    res.sendFile("public/index.html")
+})
+
+
 mongoose.connection.once("open", () => {
     console.log("DB CONNECTED")
     app.listen(process.env.PORT || 5000, err => {
