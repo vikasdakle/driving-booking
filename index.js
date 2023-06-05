@@ -12,6 +12,7 @@ app.use(cors({
     origin: "https://driving-booking-production.up.railway.app/api",
     credentials: true
 }))
+app.use(express.static("public"))
 
 app.use("/api/user", require("./routes/userRoutes"))
 app.use("/api/admin", require("./routes/adminRoutes"))
