@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const { v4: uuid } = require("uuid")
 const crypto = require("crypto");
 const { request } = require("http");
+const Order = require("../models/Order");
 
 exports.register = asyncHandler(async (req, res) => {
     const { password, email } = req.body
@@ -96,36 +97,57 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
 
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body
     const key = `${razorpay_order_id}|${razorpay_payment_id}`
+    const signature = crypto
+        .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY)
+        .update(key.toString())
+        .digest("hex")
+    if (signature !== razorpay_signature) {
+        return res.status(400).json({
+            message: "Invalid Signature"
+        })
+    }
+    if (!req.cookies) {
+        return res.status(401).json({ message: `Inavlid Request` })
+    }
+    const { token } = req.cookies
+    if (!token) {
+        return res.status(401).json({ message: `Please Provide Token` })
+    }
 
-    // const signature = crypto
-    //     .createHmac("sha256", process.env.RAZORPAY_SECRET)
-    //     .update(toString(key))
-    //     .digest("hex")
-    // console.log(signature)
-    // if (signature !== razorpay_signature) {
-    //     return res.status(400).json({
-    //         message: "Invalid Signature"
-    //     })
-    // }
+    const { id } = jwt.verify(token, process.env.JWT_KEY)
 
-    // console.log(req.cookies)
-    // if (!req.cookies) {
-    //     return res.status(401).json({ message: `Inavlid Request` })
-    // }
-    // const { token } = req.cookies
-    // if (!token) {
-    //     return res.status(401).json({ message: `Please Provide Token` })
-    // }
-    // const { userId } = jwt.verify(token, process.env.JWT_KEY)
+    const result = await Order.create({
+        userId: id,
+        course: req.body.courseDetails,
+        paid: true
+    })
+    res.json({ message: `Order Placed Success`, result })
+})
 
-    // const result = await Order.create({
-    //     userId,
-    //     paid: true
-    // })
-    res.json({ message: `Order Placed Success` })
+exports.getCourses = (async (req, res) => {
+    try {
+        if (!req.cookies) {
+            return res.status(401).json({ message: `Inavlid Request` })
+        }
+        const { token } = req.cookies
+        if (!token) {
+            return res.status(401).json({ message: `Please Provide Token` })
+        }
+        const { id } = jwt.verify(token, process.env.JWT_KEY)
+        console.log(id)
+        const result = await Order.find({ userId: id })
+        res.json({ message: `User Order History Success`, result })
+    } catch (error) {
+        res.status(400).json({ message: `Error ${error}` })
+    }
+})
 
-
-
+exports.logoutContro = (async (req, res) => {
+    try {
+        console.log("dknsdjkv")
+    } catch (error) {
+        res.status(400).json({ message: `Error ${error}` })
+    }
 })
 
 

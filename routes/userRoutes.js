@@ -1,15 +1,14 @@
-const { register, login, initiatePayment, GetKey, verifyPayment, } = require("../controllers/userController")
+const { register, login, initiatePayment, GetKey, verifyPayment, getCourses, logoutContro } = require("../controllers/userController")
 
 
 const router = require("express").Router()
 
 router
-
     .post("/register", register)
     .post("/login", login)
     .post("/initiate-Payment", initiatePayment)
-    .get("/getKey", GetKey)
     .post("/payment-verification", verifyPayment)
-
-
+    .post("/logout", logoutContro)
+    .get("/getKey", GetKey)
+    .get("/userbookings", getCourses)
 module.exports = router
