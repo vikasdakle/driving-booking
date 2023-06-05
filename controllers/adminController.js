@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler")
 const User = require("../models/User")
 const Course = require("../models/Course")
+const Order = require("../models/Order")
 
 exports.readUsers = asyncHandler(async (req, res) => {
     const result = await User.find()
@@ -21,6 +22,14 @@ exports.getCourse = asyncHandler(async (req, res) => {
     const result = await Course.find()
     res.json({
         message: "Course Fetched success",
+        result
+    })
+})
+
+exports.ViewAllBookings = asyncHandler(async (req, res) => {
+    const result = await Order.find()
+    res.json({
+        message: "Course All Fetched success",
         result
     })
 })

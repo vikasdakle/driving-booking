@@ -5,6 +5,12 @@ const orderSchema = mongoose.Schema({
         ref: "user",
         required: true
     },
+    userName: {
+        type: String
+    },
+    userEmail: {
+        type: String
+    },
     paid: {
         type: Boolean,
         required: true

@@ -115,9 +115,12 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
     }
 
     const { id } = jwt.verify(token, process.env.JWT_KEY)
-
+    const userDetails = await User.findById({ _id: id })
+    console.log(userDetails.name)
     const result = await Order.create({
         userId: id,
+        userName: userDetails.name,
+        userEmail: userDetails.email,
         course: req.body.courseDetails,
         paid: true
     })
