@@ -9,7 +9,7 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: "https://driving-booking-production.up.railway.app",
+    origin: "https://driving-booking-production.up.railway.app/api",
     credentials: true
 }))
 
